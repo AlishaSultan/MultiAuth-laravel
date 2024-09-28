@@ -37,7 +37,11 @@ class User extends Authenticatable
      *
      * @return array<string, string>
      */
+<<<<<<< HEAD
     protected function casts(): array // Todo
+=======
+    protected function casts(): array
+>>>>>>> 91a85d6570c203d3eb1f6e99086185c423644701
     {
         return [
             'email_verified_at' => 'datetime',
