@@ -19,7 +19,7 @@ class LoginController extends Controller
             if (Auth::guard('admin')->attempt(['email'=>$request->email,'password'=>$request->password])) {
                 if (Auth::guard('admin')->user()->role != 'admin') {
                     Auth::guard('admin')->logout();
-                    return redirect()->route('admin.login')->with('error','You are not authorize to view admin dashboard');
+                    return redirect()->route('admin.login')->with('error',__('validation.errorAuthorize.notAuthorize'));
                 }
                     $admin = Auth::guard('admin')->user();
                     UsersHistory::create([
@@ -30,9 +30,9 @@ class LoginController extends Controller
                         'login_time'=>now(),      
                     ]);
                     
-                return redirect()->route('admin.dashboard')->with('success','Admin Logged in Successfully');
+                return redirect()->route('admin.dashboard')->with('success',__('validation.successAdminIn.adminIn'));
             }else{
-                return redirect()->route('admin.login')->with('error','Either email or password is incorrect');
+                return redirect()->route('admin.login')->with('error',__('validation.errorIncorrect.admincred'));
             }
             
         }else {

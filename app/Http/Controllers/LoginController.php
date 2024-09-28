@@ -11,7 +11,7 @@ use App\Notifications\WelcomeUserNotification;
 use App\Notifications\NotifyAdminForNewUser;
 use Illuminate\Support\Facades\Notification;
 use App\Models\UsersHistory;
-
+use App\Events\UserLoggedIn;
 use App\Models\User;
 
 class LoginController extends Controller
@@ -22,30 +22,30 @@ class LoginController extends Controller
     
     //This will authenticate the User
     public function authenticate(UserloginValidation $request) {
-        $validator = $request->validated();
-        if($validator) {
-            if (Auth::attempt(['email'=> $request->email,'password'=>$request->password])) {
+            if (Auth::attempt(['email'=> $request->getEmail(),'password'=>$request->getPassword()])) {
                 $user = Auth::user();
-                UsersHistory::create([
-                    'name'=>$user->name,
-                    'email'=>$user->email,
-                    'role'=>$user->role,
-                    'status'=>'active',
-                    'login_time'=>now(),
-               ]);
+
+
+                 event(new UserLoggedIn($user));
+               
+               
+               
+            //     UsersHistory::create([
+            //         'name'=>$user->name,
+            //         'email'=>$user->email,
+            //         'role'=>$user->role,
+            //         'status'=>'active',
+            //         'login_time'=>now(),
+            //    ]);
                 // Todo:   Event/Listeners, validation.php, FormRequest method introduce   
 
-                $user->notify(new WelcomeUserNotification($user));
-                Notification::route('mail','alishasultan0123@gmail.com') // Todo: This email should be fetched from admin table
-                ->notify(new NotifyAdminForNewUser($user));
-                return redirect()->route('account.dashboard')->with('success','User Logged in Successfully');
+                //$user->notify(new WelcomeUserNotification($user));
+                // Notification::route('mail','') // Todo: This email should be fetched from admin table
+                // ->notify(new NotifyAdminForNewUser($user));
+                return redirect()->route('account.dashboard')->with('success',__('validation.successDashboard.loggedIn'));
             }else{
-                return redirect()->route('account.login')->with('error','Either email or password is incorrect');
+                return redirect()->route('account.login')->with('error',__('validation.errorcred.credIncorrect'));
             }
-            
-        }else {
-            return redirect()->route('account.login')->withInput()->withErrors($validator);
-        }
     }
 
     public function registerView() {
@@ -53,9 +53,6 @@ class LoginController extends Controller
     }
 
     public function registration(UserRegValidation $request) {
-
-        $validator = $request->validated();
-        if($validator) {
              $user = new User();
              $user->name = $request->name;
              $user->email = $request->email;
@@ -63,10 +60,7 @@ class LoginController extends Controller
              $user->role = 'user';
              $user->save();
 
-             return redirect()->route('account.login')->with('success','User Registered Successfully'); // Todo: Lang 
-        }else{
-            return redirect()->route('account.created')->withInput()->withErrors($validators);
-        }
+             return redirect()->route('account.login')->with('success',__('validation.successReg.RegSuccessfully')); // Todo: Lang 
 
     }
 
@@ -80,6 +74,6 @@ class LoginController extends Controller
               ]);
         Auth::logout();
         $request->session()->flush();
-        return redirect()->route('account.login')->with('success','User logout Successfully');
+        return redirect()->route('account.login')->with('success',__('validation.successOut.logout'));
     }
 }

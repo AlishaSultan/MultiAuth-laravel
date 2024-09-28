@@ -13,7 +13,6 @@ class UserloginValidation extends FormRequest
     {
         return true;
     }
-
     /**
      * Get the validation rules that apply to the request.
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
@@ -21,17 +20,24 @@ class UserloginValidation extends FormRequest
     public function rules(): array
     {
         return [
-            'email'=>'required|email',
+            'email'=>'required|email|exists:users,email',
             'password'=>'required',
         ];
     }
+
+    function getEmail() : string {
+        return $this->input('email');
+    }
+
+    function getPassword() : string {
+        return $this->input('password');
+    }
     
-    public function messages(): array
-    {
+    public function messages() {
         return [
-            'email'=> '',
-            'password'=>'',
+            'email.exists'=> __('validation.email.exists'),
         ];
-    }    
-       
+    }
+
+    
 }

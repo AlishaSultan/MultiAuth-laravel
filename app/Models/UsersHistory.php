@@ -9,14 +9,14 @@ class UsersHistory extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
+    protected $fillable = [            //mass assignment
            'name',
            'email',
            'role',
            'status',
            'login_time',
-           'logout_time'
+
     ];
 
-    //protected $guard = [] // Todo;
+    //protected $guard = [] // Todo;       //not mass assignable
 }

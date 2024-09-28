@@ -14,10 +14,6 @@ class UserRegValidation extends FormRequest
         return true;
     }
 
-    // function getEmail() : string {
-    //     return $this->input('email', 'abc@manafatech.com');
-    // }
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -28,8 +24,18 @@ class UserRegValidation extends FormRequest
         return [
             'name'=>'required',
             'email'=>'required|email|unique:users',
-            'password'=>'required|confirmed',
+            'password'=>'required|confirmed|alpha_num|min:8',
             'password_confirmation'=>'required',
         ];
     }
+
+    public function messages():array {
+        return [
+            'password.alpha_num'=>'Password must be alpha-numeric and cannot contain any special character',
+            'password.min'=>'Password must have 8 characters long',
+        ];
+    }
+
+
+    
 }
